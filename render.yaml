@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: mission-green-plate
+    runtime: node
+    plan: free
+    buildCommand: npm install --prefix frontend && npm run build --prefix frontend && npm install --prefix backend
+    startCommand: node backend/server.js
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DEMO_MODE
+        value: "true"
+    disk:
+      name: greenplate-sqlite
+      mountPath: /opt/render/project/src/data
+      sizeGB: 1
