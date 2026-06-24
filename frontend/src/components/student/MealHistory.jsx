@@ -55,17 +55,15 @@ export default function MealHistory({ studentId }) {
             {records.map((r) => (
               <div
                 key={r.id}
-                className={`flex items-center gap-3 px-5 py-2.5 text-sm transition-colors ${
+                className={`flex items-center gap-2 px-4 py-2.5 transition-colors ${
                   r.is_finished ? 'hover:bg-green-50' : 'hover:bg-orange-50'
                 }`}
               >
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${r.is_finished ? 'bg-[#4CAF50]' : 'bg-[#FF6B35]'}`} />
-                <span className="text-xs text-[#52796F] w-24 flex-shrink-0 font-mono">{formatDate(r.date)}</span>
-                <span className="flex-1 text-[#1B4332] truncate">{r.menu_name}</span>
-                <span className={r.is_finished ? 'badge-finished' : 'badge-not-finished'}>
-                  {r.is_finished ? '✅' : '❌'}
-                </span>
-                <span className={`text-xs font-bold w-12 text-right ${r.points_changed > 0 ? 'text-[#2E7D32]' : 'text-[#FF6B35]'}`}>
+                <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${r.is_finished ? 'bg-[#4CAF50]' : 'bg-[#FF6B35]'}`} />
+                <span className="text-[10px] text-[#52796F] flex-shrink-0 font-mono">{formatDate(r.date)}</span>
+                <span className="flex-1 text-xs text-[#1B4332] truncate">{r.menu_name}</span>
+                <span className="flex-shrink-0 text-sm">{r.is_finished ? '✅' : '❌'}</span>
+                <span className={`text-xs font-bold flex-shrink-0 w-10 text-right ${r.points_changed > 0 ? 'text-[#2E7D32]' : 'text-[#FF6B35]'}`}>
                   {r.points_changed > 0 ? '+' : ''}{r.points_changed}
                 </span>
               </div>

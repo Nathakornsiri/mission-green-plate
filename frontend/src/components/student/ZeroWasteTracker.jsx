@@ -1,12 +1,6 @@
 import { useState, useEffect } from 'react';
 import MascotGreenPlate from '../mascot/MascotGreenPlate';
 
-/**
- * todayStatus:
- *   'finished'     — scanned and ate all food today ✅
- *   'not_finished' — scanned but left food ❌
- *   'none'         — no scan yet today ⏳
- */
 export default function ZeroWasteTracker({ todayStatus, studentName }) {
   const [showZeroPop, setShowZeroPop] = useState(false);
 
@@ -23,177 +17,129 @@ export default function ZeroWasteTracker({ todayStatus, studentName }) {
   const trashFill   = todayStatus === 'finished' ? 0 : todayStatus === 'not_finished' ? 90 : 20;
 
   return (
-    <div className="eco-card p-5 flex flex-col sm:flex-row items-center gap-5">
-      {/* === Mascot === */}
-      <div className="relative flex flex-col items-center flex-shrink-0">
-        <MascotGreenPlate
-          state={mascotState}
-          size={110}
-          className={todayStatus === 'finished' ? 'animate-bounce-happy' : todayStatus === 'not_finished' ? 'animate-wiggle' : 'animate-float'}
-        />
-
-        {/* 0% pop badge — happy only */}
-        {showZeroPop && (
-          <div className="absolute -top-4 -right-4 animate-zero-pop bg-[#4CAF50] text-white text-sm font-black px-3 py-1 rounded-full shadow-lg">
-            0% ขยะ! 🎉
-          </div>
-        )}
-
-        {/* Speech bubble */}
-        <div className="mt-3 speech-bubble text-center max-w-[140px]">
-          {todayStatus === 'finished' ? (
-            <p className="text-xs font-bold text-[#2E7D32]">เย้! กินหมดเกลี้ยงเลย!</p>
-          ) : todayStatus === 'not_finished' ? (
-            <p className="text-xs font-medium text-[#E65100]">คำต่อไป ลองตักพอดีอิ่มกันนะ 🥺</p>
-          ) : (
-            <p className="text-xs font-medium text-[#52796F]">รอสแกนถาดอยู่นะ!</p>
-          )}
-        </div>
+    <div className="eco-card p-4 animate-slide-up">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-black text-[#1B4332] text-sm">🗑️ มาตรวัดขยะอาหาร</h3>
+        <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+          todayStatus === 'finished'
+            ? 'bg-green-100 text-green-700'
+            : todayStatus === 'not_finished'
+              ? 'bg-orange-100 text-orange-700'
+              : 'bg-gray-100 text-gray-500'
+        }`}>
+          {todayStatus === 'finished' ? '✅ กินหมด' : todayStatus === 'not_finished' ? '❌ กินเหลือ' : '⏳ รอสแกน'}
+        </span>
       </div>
 
-      {/* === Zero Waste Tracker === */}
-      <div className="flex-1 w-full">
-        <div className="flex items-center justify-between mb-2">
-          <h3 className="font-black text-[#1B4332] text-sm">มาตรวัดขยะอาหาร</h3>
-          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-            todayStatus === 'finished'
-              ? 'bg-green-100 text-green-700'
-              : todayStatus === 'not_finished'
-                ? 'bg-orange-100 text-orange-700'
-                : 'bg-gray-100 text-gray-500'
-          }`}>
-            {todayStatus === 'finished' ? '✅ กินหมด' : todayStatus === 'not_finished' ? '❌ กินเหลือ' : '⏳ ยังไม่สแกน'}
-          </span>
+      {/* Body: always side-by-side */}
+      <div className="flex items-center gap-3">
+        {/* Mascot — compact on mobile */}
+        <div className="relative flex-shrink-0">
+          <MascotGreenPlate
+            state={mascotState}
+            size={72}
+            className={
+              todayStatus === 'finished' ? 'animate-bounce-happy' :
+              todayStatus === 'not_finished' ? 'animate-wiggle' : 'animate-float'
+            }
+          />
+          {showZeroPop && (
+            <div className="absolute -top-3 -right-3 animate-zero-pop bg-[#4CAF50] text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-lg whitespace-nowrap">
+              0%! 🎉
+            </div>
+          )}
         </div>
 
-        <div className="flex items-end gap-6 mt-3">
-          {/* Trash can graphic */}
-          <div className="flex flex-col items-center gap-1 flex-shrink-0">
+        {/* Tracker graphics */}
+        <div className="flex items-end gap-3 flex-shrink-0">
+          <div className="flex flex-col items-center gap-0.5">
             <TrashCan fillPercent={trashFill} />
-            <span className="text-xs text-[#52796F] font-medium">ปริมาณขยะ</span>
+            <span className="text-[9px] text-[#52796F]">ขยะวันนี้</span>
           </div>
-
-          {/* Arrow / transform */}
-          <div className="flex flex-col items-center text-2xl text-[#4CAF50] flex-shrink-0">
-            {todayStatus === 'finished' ? '→' : '↔'}
-          </div>
-
-          {/* Right side: tree or trash goal */}
-          <div className="flex flex-col items-center gap-1 flex-shrink-0">
+          <span className="text-lg text-[#4CAF50] pb-4">{todayStatus === 'finished' ? '→' : '↔'}</span>
+          <div className="flex flex-col items-center gap-0.5">
             {todayStatus === 'finished' ? (
-              <div className="animate-tree-grow">
-                <TreeGraphic />
-              </div>
+              <div className="animate-tree-grow"><TreeGraphic /></div>
             ) : (
               <EmptyTrashGoal />
             )}
-            <span className="text-xs text-[#52796F] font-medium">
-              {todayStatus === 'finished' ? 'ต้นไม้เติบโต!' : 'เป้าหมาย 0%'}
+            <span className="text-[9px] text-[#52796F]">
+              {todayStatus === 'finished' ? 'ต้นไม้งอก!' : 'เป้าหมาย'}
             </span>
           </div>
+        </div>
 
-          {/* Text description */}
-          <div className="flex-1 text-sm text-[#52796F] leading-relaxed hidden sm:block">
-            {todayStatus === 'finished' ? (
-              <p>
-                <span className="font-bold text-[#2E7D32]">ยอดเยี่ยม!</span> วันนี้{studentName || 'คุณ'}กินหมดเกลี้ยง
-                ช่วยลดขยะอาหารได้ 100% ต้นไม้ของเราเติบโตขึ้นแล้ว! 🌱
-              </p>
-            ) : todayStatus === 'not_finished' ? (
-              <p>
-                ยังมีอาหารเหลืออยู่นะ ลองตักพอดีในมื้อหน้า
-                เพื่อให้ขยะอาหารเป็น <span className="font-bold text-[#4CAF50]">0%</span> และต้นไม้จะงอกขึ้นมา! 🌿
-              </p>
-            ) : (
-              <p>
-                เมื่อสแกนถาดอาหารแล้ว ระบบจะบันทึกว่ากินหมดไหม
-                เป้าหมายคือขยะอาหาร <span className="font-bold text-[#4CAF50]">0%</span> ทุกวัน!
-              </p>
-            )}
-          </div>
+        {/* Speech text */}
+        <div className="flex-1 min-w-0">
+          {todayStatus === 'finished' ? (
+            <>
+              <p className="text-xs font-bold text-[#2E7D32] leading-snug">ยอดเยี่ยม!</p>
+              <p className="text-xs text-[#52796F] leading-snug mt-0.5">วันนี้กินหมดเกลี้ยง ลดขยะได้ 100%! 🌱</p>
+            </>
+          ) : todayStatus === 'not_finished' ? (
+            <>
+              <p className="text-xs font-bold text-[#E65100] leading-snug">ยังมีอาหารเหลือนะ</p>
+              <p className="text-xs text-[#52796F] leading-snug mt-0.5">มื้อหน้าลองตักพอดีอิ่มนะ 🥺</p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs font-bold text-[#1B4332] leading-snug">รอสแกนถาดอยู่!</p>
+              <p className="text-xs text-[#52796F] leading-snug mt-0.5">เป้าหมาย: ขยะ 0% ทุกวัน</p>
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-/* === Trash Can SVG === */
 function TrashCan({ fillPercent }) {
   const fill = Math.max(0, Math.min(100, fillPercent));
   const fillColor = fill > 60 ? '#FF6B35' : fill > 20 ? '#FFD600' : '#A5D6A7';
-  const fillHeight = (fill / 100) * 44;
-  const fillY = 52 - fillHeight;
+  const fillHeight = (fill / 100) * 36;
+  const fillY = 42 - fillHeight;
 
   return (
-    <svg width="56" height="72" viewBox="0 0 56 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Lid */}
-      <rect x="8" y="6" width="40" height="8" rx="4" fill="#90A4AE" />
-      <rect x="20" y="2" width="16" height="6" rx="3" fill="#90A4AE" />
-      {/* Body */}
-      <rect x="10" y="14" width="36" height="50" rx="6" fill="#ECEFF1" stroke="#B0BEC5" strokeWidth="2" />
-      {/* Fill level */}
-      <clipPath id="trashClip">
-        <rect x="10" y="14" width="36" height="50" rx="6" />
-      </clipPath>
-      <rect
-        x="10"
-        y={fillY + 14}
-        width="36"
-        height={fillHeight}
-        fill={fillColor}
-        opacity="0.7"
-        clipPath="url(#trashClip)"
-        style={{ transition: 'all 0.8s ease-out' }}
-      />
-      {/* Stripes on body */}
-      <line x1="20" y1="18" x2="20" y2="60" stroke="#B0BEC5" strokeWidth="1.5" strokeDasharray="4 4" />
-      <line x1="28" y1="18" x2="28" y2="60" stroke="#B0BEC5" strokeWidth="1.5" strokeDasharray="4 4" />
-      <line x1="36" y1="18" x2="36" y2="60" stroke="#B0BEC5" strokeWidth="1.5" strokeDasharray="4 4" />
-      {/* Percentage label */}
-      <text x="28" y="42" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#455A64">
-        {fill}%
-      </text>
+    <svg width="44" height="58" viewBox="0 0 44 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="5" width="32" height="6" rx="3" fill="#90A4AE" />
+      <rect x="15" y="2" width="14" height="5" rx="2.5" fill="#90A4AE" />
+      <rect x="8" y="11" width="28" height="42" rx="5" fill="#ECEFF1" stroke="#B0BEC5" strokeWidth="1.5" />
+      <clipPath id="tc2"><rect x="8" y="11" width="28" height="42" rx="5" /></clipPath>
+      <rect x="8" y={fillY + 11} width="28" height={fillHeight} fill={fillColor} opacity="0.7" clipPath="url(#tc2)"
+        style={{ transition: 'all 0.8s ease-out' }} />
+      <line x1="16" y1="15" x2="16" y2="49" stroke="#B0BEC5" strokeWidth="1.2" strokeDasharray="3 3" />
+      <line x1="22" y1="15" x2="22" y2="49" stroke="#B0BEC5" strokeWidth="1.2" strokeDasharray="3 3" />
+      <line x1="28" y1="15" x2="28" y2="49" stroke="#B0BEC5" strokeWidth="1.2" strokeDasharray="3 3" />
+      <text x="22" y="34" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#455A64">{fill}%</text>
     </svg>
   );
 }
 
-/* === Growing Tree SVG === */
 function TreeGraphic() {
   return (
-    <svg width="56" height="72" viewBox="0 0 56 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Trunk */}
-      <rect x="24" y="48" width="8" height="20" rx="4" fill="#795548" />
-      {/* Lower canopy */}
-      <ellipse cx="28" cy="46" rx="18" ry="14" fill="#66BB6A" />
-      {/* Upper canopy */}
-      <ellipse cx="28" cy="34" rx="14" ry="12" fill="#4CAF50" />
-      {/* Top */}
-      <ellipse cx="28" cy="24" rx="10" ry="9" fill="#388E3C" />
-      {/* Leaf sparkles */}
-      <circle cx="16" cy="38" r="3" fill="#A5D6A7" opacity="0.8" />
-      <circle cx="40" cy="30" r="2.5" fill="#A5D6A7" opacity="0.8" />
-      <circle cx="22" cy="20" r="2" fill="#C8E6C9" opacity="0.9" />
+    <svg width="44" height="58" viewBox="0 0 44 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="19" y="38" width="6" height="17" rx="3" fill="#795548" />
+      <ellipse cx="22" cy="37" rx="14" ry="11" fill="#66BB6A" />
+      <ellipse cx="22" cy="27" rx="11" ry="10" fill="#4CAF50" />
+      <ellipse cx="22" cy="19" rx="8" ry="7" fill="#388E3C" />
+      <circle cx="13" cy="31" r="2.5" fill="#A5D6A7" opacity="0.8" />
+      <circle cx="31" cy="24" r="2" fill="#A5D6A7" opacity="0.8" />
     </svg>
   );
 }
 
-/* === Empty Trash Goal SVG === */
 function EmptyTrashGoal() {
   return (
-    <svg width="56" height="72" viewBox="0 0 56 72" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Lid */}
-      <rect x="8" y="6" width="40" height="8" rx="4" fill="#A5D6A7" />
-      <rect x="20" y="2" width="16" height="6" rx="3" fill="#A5D6A7" />
-      {/* Body empty */}
-      <rect x="10" y="14" width="36" height="50" rx="6" fill="#F1F8E9" stroke="#A5D6A7" strokeWidth="2" />
-      {/* Stripes */}
-      <line x1="20" y1="18" x2="20" y2="60" stroke="#C8E6C9" strokeWidth="1.5" strokeDasharray="4 4" />
-      <line x1="28" y1="18" x2="28" y2="60" stroke="#C8E6C9" strokeWidth="1.5" strokeDasharray="4 4" />
-      <line x1="36" y1="18" x2="36" y2="60" stroke="#C8E6C9" strokeWidth="1.5" strokeDasharray="4 4" />
-      {/* 0% label */}
-      <text x="28" y="42" textAnchor="middle" fontSize="11" fontWeight="bold" fill="#4CAF50">0%</text>
-      {/* Heart */}
-      <text x="28" y="55" textAnchor="middle" fontSize="10">💚</text>
+    <svg width="44" height="58" viewBox="0 0 44 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="5" width="32" height="6" rx="3" fill="#A5D6A7" />
+      <rect x="15" y="2" width="14" height="5" rx="2.5" fill="#A5D6A7" />
+      <rect x="8" y="11" width="28" height="42" rx="5" fill="#F1F8E9" stroke="#A5D6A7" strokeWidth="1.5" />
+      <line x1="16" y1="15" x2="16" y2="49" stroke="#C8E6C9" strokeWidth="1.2" strokeDasharray="3 3" />
+      <line x1="22" y1="15" x2="22" y2="49" stroke="#C8E6C9" strokeWidth="1.2" strokeDasharray="3 3" />
+      <line x1="28" y1="15" x2="28" y2="49" stroke="#C8E6C9" strokeWidth="1.2" strokeDasharray="3 3" />
+      <text x="22" y="32" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#4CAF50">0%</text>
+      <text x="22" y="44" textAnchor="middle" fontSize="9">💚</text>
     </svg>
   );
 }
